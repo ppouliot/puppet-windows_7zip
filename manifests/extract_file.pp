@@ -1,4 +1,4 @@
-# == Define: openstack_hyper_v::base::windows_feature
+# == Define: windows_7zip::windows_feature
 #
 # It allows the extraction of compressed files.
 #
@@ -11,7 +11,7 @@
 #
 # === Examples
 #
-#  openstack_hyper_v::base::extract_file { 'Hyper-V':
+#  windows_7zip::extract_file { 'Hyper-V':
 #    $file        => '',
 #    $destination => '', 
 #  }
@@ -20,9 +20,9 @@
 #
 # === Copyright
 #
-define openstack_hyper_v::base::extract_file($file, $destination){
-  if !defined(Openstack_hyper_v::Base::Remote_file['7zip-msi-installer']) {
-    openstack_hyper_v::base::remote_file { '7zip-msi-installer':
+define windows_7zip::extract_file($file, $destination){
+  if !defined(Windows_Common::Remote_file['7zip-msi-installer']) {
+    windows_common::remote_file { '7zip-msi-installer':
       source      => 'http://dl.7-zip.org/7z930-x64.msi',
       destination => "${::temp}\\7z930-x64.msi",
     }
@@ -32,7 +32,7 @@ define openstack_hyper_v::base::extract_file($file, $destination){
     package { '7-Zip 9.30 (x64 edition)':
       ensure  => installed,
       source  => "${::temp}\\7z930-x64.msi",
-      require => Openstack_hyper_v::Base::Remote_file['7zip-msi-installer']
+      require => Windows_common::Remote_file['7zip-msi-installer']
     }
   }
 
