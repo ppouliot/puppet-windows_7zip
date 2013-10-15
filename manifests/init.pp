@@ -1,30 +1,56 @@
-# Class: windows::7zip
+# === Class: windows_7zip
 #
-# This module downloads then installs 7zip
+# This module installs 7-zip on Windows systems. It also adds an entry to the
+# PATH environment variable.
 #
-# Parameters: none
+# === Parameters
 #
-# Actions:
+# [*url*]
+#   HTTP url where the installer is available. It defaults to main site.
+# [*package*]
+#   Package name in the system.
+# [*file_path*]
+#   This parameter is used to specify a local path for the installer. If it is
+#   set, the remote download from $url is not performed. It defaults to false.
 #
+# === Examples
+#
+# class { 'windows_7zip': }
+#
+# class { 'windows_7zip':
+#   $url     => 'http://192.168.1.1/files/7zip.exe',
+#   $package => '7-Zip 9.30 (x64 edition)',
+# }
+#
+# === Authors
+# 
+#
+class windows_7zip (
+  $url       = $::windows_7zip::params::url,
+  $package   = $::windows_7zip::params::package,
+  $file_path = false,
+) inherits windows_7zip::params {
 
-class windows::7zip(
-
-  $file    = '7z930-x64.msi',
-  #$url    = 'http://downloads.sourceforge.net/sevenzip/7z930-x64.msi',
-  $url     = 'http://dl.7-zip.org/7z930-x64.msi',
-){
-
-  commands::download { '7zip':
-    url  => $url,
-    file => $file,
+  if $file_path {
+    $7zip_installer_path = $file_path
+  } else {
+    $7zip_installer_path = "${::temp}\\${package}.exe"
+    windows_common::remote_file{'7-zip':
+      source      => $url,
+      destination => $7zip_installer_path,
+      before      => Package[$package],
+    }
+  }
+  package { $package:
+    ensure          => installed,
+    source          => $7zip_installer_path,
+    install_options => ['/VERYSILENT','/SUPPRESSMSGBOXES','/LOG'],
   }
 
-
-  package { '7z930-x64':
-    ensure   => installed,
-    source   => "${::temp}\\${file}",
-    provider => windows,
-    require  => Commands::Download['7zip']
+  $7zip_path = 'C:\Program Files\7-zip\'
+ 
+  windows_path { $7zip_path:
+    ensure  => present,
+    require => Package[$package],
   }
-
 }
