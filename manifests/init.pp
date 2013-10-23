@@ -47,7 +47,7 @@ class windows_7zip (
     install_options => ['/VERYSILENT','/SUPPRESSMSGBOXES','/LOG'],
   }
 
-  $7zip_path = 'C:\Program Files\7-zip\'
+  $7zip_path = 'C:\Program Files\7-zip'
  
   windows_path { $7zip_path:
     ensure  => present,
