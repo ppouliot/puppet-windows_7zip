@@ -31,20 +31,30 @@ class windows_7zip (
   $file_path = false,
 ) inherits windows_7zip::params {
 
-  if $file_path {
-    $7zip_installer_path = $file_path
+  if $chocolatey {
+    Package { provider => chocolatey }
   } else {
-    $7zip_installer_path = "${::temp}\\${package}.exe"
-    windows_common::remote_file{'7-zip':
-      source      => $url,
-      destination => $7zip_installer_path,
-      before      => Package[$package],
+    Package {
+      source          => $7zip_installer_path,
+      install_options => ['/VERYSILENT','/SUPPRESSMSGBOXES','/LOG'],
+      provider        => windows,
+    }
+
+    if $file_path {
+      $7zip_installer_path = $file_path
+    } else {
+      $7zip_installer_path = "${::temp}\\${package}.exe"
+      windows_common::remote_file{'7-zip':
+        source      => $url,
+        destination => $7zip_installer_path,
+        before      => Package[$package],
+      }
     }
   }
   package { $package:
     ensure          => installed,
-    source          => $7zip_installer_path,
-    install_options => ['/VERYSILENT','/SUPPRESSMSGBOXES','/LOG'],
+  #  source          => $7zip_installer_path,
+  #  install_options => ['/VERYSILENT','/SUPPRESSMSGBOXES','/LOG'],
   }
 
   $7zip_path = 'C:\Program Files\7-zip'
