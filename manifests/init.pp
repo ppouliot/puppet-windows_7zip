@@ -31,7 +31,7 @@ class windows_7zip (
   $file_path = false,
 ) inherits windows_7zip::params {
 
-  if $chocolatey {
+  if $::chocolatey {
     Package { provider => chocolatey }
   } else {
     Package {
@@ -58,7 +58,6 @@ class windows_7zip (
   }
 
   $7zip_path = 'C:\Program Files\7-zip'
- 
   windows_path { $7zip_path:
     ensure  => present,
     require => Package[$package],

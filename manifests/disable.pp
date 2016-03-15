@@ -10,7 +10,7 @@ class windows_7zip::disable (
     ensure  => absent,
   }
 
-  windows_path { $7zip_path:
+  windows_path { $::7zip_path:
     ensure  => absent,
   }
 

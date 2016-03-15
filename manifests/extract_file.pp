@@ -38,7 +38,7 @@ define windows_7zip::extract_file($file, $destination){
 
   exec {"extract-file-${file}-to-${destination}":
     command     => "7z.exe x -y \"${file}\"",
-    path        => "${programw6432}\\7-Zip;${::path}",
+    path        => "${::programw6432}\\7-Zip;${::path}",
     cwd         => $destination,
     refreshonly => true,
     require     => Package['7-Zip 9.30 (x64 edition)'],
